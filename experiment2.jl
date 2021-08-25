@@ -9,12 +9,12 @@ println("starting ITensors Experiment simulation...")
 Jxx, Jzz, hx, hz = 0.3, 0.4, 0.2, 0.5
 Nbath = 5
 N = Nbath + 1
-gc = 0.01
+gc = 0.1
 # gbs= 0:0.1:0.5
 gbs=[0 0.1 0.2 0.3 0.4 0.5]
 # gbs = [0.1]
-REP = 1
-RANGE = 5
+REP = 5
+RANGE = 10
 
 # ab=1/2
 
@@ -32,7 +32,7 @@ function centralSpinEvolution(s,g)
 
         hj = op("Z",s1) * op("Z",s2)
         Gj = exp(-1im * g[i-1] * hj)
-        # ψ=twoSiteGate(s,"Z",g[i-1],1,i)*ψ
+        push!(gates, Gj)
     end
     return gates
 end
@@ -75,7 +75,6 @@ function timeDevelopement(s,N,gb,ψ)
         push!(Θs,θ)
         ψ = apply(centralGates,ψ)
         ψ = apply(bathGates,ψ)
-        display("text/plain",ψ[1][1])
     end
     Rs,Θs
 

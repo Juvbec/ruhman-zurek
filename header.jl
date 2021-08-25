@@ -55,6 +55,49 @@ function centralSpinHamiltonian(s,gs,N)
   end
   MPO()
 end
+#
+# function measureR(s,ψ)
+#   ampo1 = AutoMPO()
+#   ampo1 += "ProjUp", 1
+#   Pup = MPO(ampo1,s)
+#
+#   ampo2 = AutoMPO()
+#   ampo2 += "ProjDn", 1
+#   Pdn = MPO(ampo2,s)
+#
+#   ampo3 = AutoMPO()
+#   ampo3 += "X", 1
+#   Sx = MPO(ampo3,s)
+#
+#   # orthogonalize!(ψ,1)
+#
+#   ψup = Pup * ψ
+#   ψdn = Pdn * ψ
+#   r = inner(ψup,Sx,ψdn)
+#   return abs(r), angle(r)
+# end
+#
+# function measureab(s,ψ)
+#     ampo1 = AutoMPO()
+#     ampo1 += "ProjUp", 1
+#     Pup = MPO(ampo1,s)
+#
+#     ampo2 = AutoMPO()
+#     ampo2 += "ProjDn", 1
+#     Pdn = MPO(ampo2,s)
+#
+#     return inner(ψ,Pup,ψ)*inner(ψ,Pdn,ψ)
+# end
+
+
+function turnUptoLeft(s,N,psi)
+  for i in 1:N
+      M = singleSiteGate(s,"Y",pi/4,i)
+      psi = M*psi
+  end
+  psi
+end
+
 
 function measureR(s,ψ)
   ampo1 = AutoMPO()
@@ -75,27 +118,4 @@ function measureR(s,ψ)
   ψdn = Pdn * ψ
   r = inner(ψup,Sx,ψdn)
   return abs(r), angle(r)
-end
-
-function measureab(s,ψ)
-    ampo1 = AutoMPO()
-    ampo1 += "ProjUp", 1
-    Pup = MPO(ampo1,s)
-
-    ampo2 = AutoMPO()
-    ampo2 += "ProjDn", 1
-    Pdn = MPO(ampo2,s)
-
-    return inner(ψ,Pup,ψ)*inner(ψ,Pdn,ψ)
-
-
-end
-
-
-function turnUptoLeft(s,N,psi)
-  for i in 1:N
-      M = singleSiteGate(s,"Y",pi/4,i)
-      psi = M*psi
-  end
-  psi
 end
