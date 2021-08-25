@@ -24,7 +24,7 @@ end
 
 function plotAverage(data)
     plt = plot(
-        title=string("Entanglement distillation, N="),
+        title=string("Entanglement distillation, N=$N"),
         xguide="Number of Evolutions",
         yguide="r",
         ylims=(0,1)

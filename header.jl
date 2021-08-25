@@ -26,8 +26,11 @@ end
 
 function turnUptoLeft(s,N,psi)
   for i in 1:N
-      M = singleSiteGate(s,"Y",pi/4,i)
-      psi = M*psi
+      hj = op("Y",s[i])
+      Gj = exp(-1im * pi/4 * hj)
+      return apply(Gj,psi)
+      # M = singleSiteGate(s,"Y",pi/4,i)
+      # psi = M*psi
   end
   psi
 end
