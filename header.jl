@@ -25,30 +25,41 @@ end
 
 
 function turnUptoLeft(s,N,psi)
+  gates =ITensor[]
   for i in 1:N
       hj = op("Y",s[i])
       Gj = exp(-1im * pi/4 * hj)
-      return apply(Gj,psi)
-      # M = singleSiteGate(s,"Y",pi/4,i)
-      # psi = M*psi
+      push!(gates,Gj)
   end
+  return apply(gates,psi)
   psi
 end
 
+function twoSiteGate(s,op,θ,s1,s2)
+  ampo = AutoMPO()
+
+  ampo += cos(θ),"Id",s1,"Id",s2
+  ampo += -1im*sin(θ), op, s1, op, s2
+
+  MPO(ampo, s)
+end
+let
+  s = siteinds("S=1/2", 2)
+  ψ=initStates(s,2)
+  ψ=turnUptoLeft(s,2,ψ)
+  G=op("S+",s[1])
+  @show inner(G,ψ)
+  # ψ=twoSiteGate(s,"Z",1,1,2)
+  # noprime!(ψ)
+  # r,θ=measureR(s,ψ)
+  # @show r
+end
 # MPO tools
 # function singleSiteGate(s,op,θ, s1)
 #   ampo = AutoMPO()
 #
 #   ampo += cos(θ),"Id",s1
 #   ampo += -1im*sin(θ),op,s1
-#
-#   MPO(ampo, s)
-# end
-# function twoSiteGate(s,op,θ,s1,s2)
-#   ampo = AutoMPO()
-#
-#   ampo += cos(θ),"Id",s1,"Id",s2
-#   ampo += -1im*sin(θ), op, s1, op, s2
 #
 #   MPO(ampo, s)
 # end

@@ -1,6 +1,7 @@
 using Plots
 include("utils.jl")
 
+
 # creating plotting animation and saving the gif
 # saving the gif through plotly didn't work, so i'm using animation
 # https://docs.juliaplots.org/latest/recipes/

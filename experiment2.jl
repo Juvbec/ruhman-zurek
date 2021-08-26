@@ -1,6 +1,8 @@
 using ITensors
+using Plots
 include("header.jl")
 include("utils.jl")
+# include("plotting.jl")
 # include("plotting.jl")
 # plotly()
 println("starting ITensors Experiment simulation...")
@@ -9,11 +11,12 @@ println("starting ITensors Experiment simulation...")
 Jxx, Jzz, hx, hz = 0.3, 0.4, 0.2, 0.5
 Nbath = 5
 N = Nbath + 1
-gc = 0.05
+gc = 0.2
 # gbs= 0:0.1:0.5
-gbs=[0 0.1 0.2 0.3 0.4 0.5 1 2 pi 2*pi]
+# gbs=[0 0.1 0.2 0.3 0.4 0.5 1 2 pi 2*pi]
+gbs = [0]
 # gbs = [0.1]
-REP = 50
+REP = 1
 RANGE = 50
 
 # ab=1/2
@@ -27,10 +30,8 @@ RANGE = 50
 function centralSpinEvolution(s,g)
     gates = ITensor[]
     for i in 2:N
-        s1 = s[1]
-        s2 = s[i]
 
-        hj = op("Z",s1) * op("Z",s2)
+        hj = op("Z",s[1]) * op("Z",s[i])
         Gj = exp(-1im * g[i-1] * hj)
         push!(gates, Gj)
     end
@@ -74,18 +75,20 @@ function timeDevelopement(s,N,gb,ψ)
         push!(Rs,real(r/ab))
         push!(Θs,θ)
         ψ = apply(centralGates,ψ)
-        for j ∈ 1:N
+        for j ∈ 1:1
             ψ = apply(bathGates,ψ)
         end
     end
-    Rs,Θs
+    display(plot(Rs))
+    @show gcRandArr
 
+    Rs,Θs
 end
 # averaging realizations
 function experiment(s,N,gbs,rep)
 # first line: [Nbath, Nrealizations, Range, gc, Ngbs]
     data = Any[]
-    push!(data,[N-1 rep RANGE gc size(gbs)[2]])
+    push!(data,[N-1 rep RANGE gc size(gbs)[1]])
     for gb ∈ gbs
         for i ∈ 1:rep
             psi0= initStates(s,N)
