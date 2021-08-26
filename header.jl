@@ -18,8 +18,8 @@ function initStates(s,N)
 end
 
 function measureR(s,ψ)
-  gate = op("PXP",s[1])
-  r = expect(ψ,"PXP";site_range=1:1)
+  # gate = op("PXP",s[1])
+  r = expect(ψ,"PXP";site_range=1:1)[1]
   return abs(r), angle(r)
 end
 

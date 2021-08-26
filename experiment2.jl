@@ -14,7 +14,7 @@ gc = 0.05
 gbs=[0 0.1 0.2 0.3 0.4 0.5 1 2 pi 2*pi]
 # gbs = [0.1]
 REP = 50
-RANGE = 100
+RANGE = 50
 
 # ab=1/2
 
@@ -74,7 +74,9 @@ function timeDevelopement(s,N,gb,ψ)
         push!(Rs,real(r/ab))
         push!(Θs,θ)
         ψ = apply(centralGates,ψ)
-        ψ = apply(bathGates,ψ)
+        for j ∈ 1:N
+            ψ = apply(bathGates,ψ)
+        end
     end
     Rs,Θs
 
