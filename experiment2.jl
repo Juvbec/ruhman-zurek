@@ -14,9 +14,9 @@ N = Nbath + 1
 gc = 0.2
 # gbs= 0:0.1:0.5
 # gbs=[0 0.1 0.2 0.3 0.4 0.5 1 2 pi 2*pi]
-gbs = [0]
+gbs = [0 0.1 0.2 0.3 0.4 0.5]
 # gbs = [0.1]
-REP = 1
+REP = 50
 RANGE = 50
 
 # ab=1/2
@@ -79,8 +79,8 @@ function timeDevelopement(s,N,gb,ψ)
             ψ = apply(bathGates,ψ)
         end
     end
-    display(plot(Rs))
-    @show gcRandArr
+    # display(plot(Rs))
+    # @show gcRandArr
 
     Rs,Θs
 end

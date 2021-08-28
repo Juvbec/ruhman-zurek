@@ -19,7 +19,10 @@ end
 
 function measureR(s,ψ)
   # gate = op("PXP",s[1])
-  r = expect(ψ,"PXP";site_range=1:1)[1]
+  # r = inner(ψ,apply(op("Z",s[1]) , ψ))
+  r = expect(ψ,"S+";site_range=1:1)
+  display("text/plain",r)
+  r=r[1]
   return abs(r), angle(r)
 end
 
@@ -43,17 +46,34 @@ function twoSiteGate(s,op,θ,s1,s2)
 
   MPO(ampo, s)
 end
+
+
 let
   s = siteinds("S=1/2", 2)
   ψ=initStates(s,2)
   ψ=turnUptoLeft(s,2,ψ)
-  G=op("S+",s[1])
-  @show inner(G,ψ)
-  # ψ=twoSiteGate(s,"Z",1,1,2)
+  g = 0.5
+  hj = op("Z",s[1])*op("Z",s[2])
+  Gj = exp(-1im * g * hj)
+
+  ψ=apply(Gj,ψ)
+
+
+
+
+  # @show inner(ψ,ψ)
   # noprime!(ψ)
-  # r,θ=measureR(s,ψ)
-  # @show r
+  r,θ=measureR(s,ψ)
+  # println("θ: ", θ)
+  println("r: ", r*2)
+
+  # G=op("S+",s[1])
+  # println("expectation value: $g ", 2*expect(ψ,"S+";site_range=1:1)[1] )
 end
+
+
+
+
 # MPO tools
 # function singleSiteGate(s,op,θ, s1)
 #   ampo = AutoMPO()

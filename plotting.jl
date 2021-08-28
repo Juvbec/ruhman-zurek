@@ -43,26 +43,7 @@ function plotAverage(data)
     str = "average N="*string(N,pad=2)
     savefig(str)
 end
-function plotting2(data)
-    range = size(data)[2]
-    X,Y = zeros(range,3), zeros(range,3)
-    for i in 1:spreadNum
-        R = data[2*i-1,:]
-        θ = data[2*i,:]
 
-        for j∈1:range
-            X[j,i] = R[j]*cos(θ[j])
-            Y[j,i] = R[j]*sin(θ[j])
-        end
-    end
-    anim = @animate for t ∈ 1:range-1
-        for k in 1:spreadNum
-            if k==1 blochplot(X[:,k],Y[:,k],t)
-            else blochplot!(X[:,k],Y[:,k],t) end
-        end
-    end
-    gif(anim,"blochsphere.gif", fps=15)
-end
 
 function getAverage(data,Ngb)
 # first line: [Nbath, Nrealizations, Range, gc, Ngbs]
@@ -84,8 +65,31 @@ function getArrayFromData(data,Ngb,Nrealization,type,rep)
     rowNum = 1 + (Ngb-1)*rep*2 + (Nrealization-1)*2 + type
     data[rowNum,:]
 end
+
+function plotting2(data)
+    range = size(data)[2]
+    X,Y = zeros(range,3), zeros(range,3)
+    for i in 1:spreadNum
+        R = data[2*i,:]
+        θ = data[2*i+1,:]
+
+        for j∈1:range
+            X[j,i] = R[j]*cos(θ[j])
+            Y[j,i] = R[j]*sin(θ[j])
+        end
+    end
+    anim = @animate for t ∈ 1:range-1
+        for k in 1:spreadNum
+            if k==1 blochplot(X[:,k],Y[:,k],t)
+            else blochplot!(X[:,k],Y[:,k],t) end
+        end
+    end
+    gif(anim,"blochsphere.gif", fps=15)
+end
+
+
 let
     data = readData(N)
-    plotAverage(data)
-    # plotting2(data)
+    # plotAverage(data)
+    plotting2(data)
 end
