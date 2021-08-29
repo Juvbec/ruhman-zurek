@@ -11,7 +11,7 @@ println("starting ITensors Experiment simulation...")
 Jxx, Jzz, hx, hz = 0.3, 0.4, 0.2, 0.5
 Nbath = 5
 N = Nbath + 1
-gc = 0.2
+gc = 0.05
 # gbs= 0:0.1:0.5
 # gbs=[0 0.1 0.2 0.3 0.4 0.5 1 2 pi 2*pi]
 gbs = [0 0.1 0.2 0.3 0.4 0.5]
@@ -75,7 +75,7 @@ function timeDevelopement(s,N,gb,ψ)
         push!(Rs,real(r/ab))
         push!(Θs,θ)
         ψ = apply(centralGates,ψ)
-        for j ∈ 1:1
+        for j ∈ 1:N
             ψ = apply(bathGates,ψ)
         end
     end

@@ -19,10 +19,8 @@ end
 
 function measureR(s,ψ)
   # gate = op("PXP",s[1])
-  # r = inner(ψ,apply(op("Z",s[1]) , ψ))
-  r = expect(ψ,"S+";site_range=1:1)
-  display("text/plain",r)
-  r=r[1]
+  # r = inner(   ψ,      apply(op("S+",s[1]) , ψ)    )
+  r = expect(ψ,"S+";site_range=1:1)[1]
   return abs(r), angle(r)
 end
 

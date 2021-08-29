@@ -90,6 +90,6 @@ end
 
 let
     data = readData(N)
-    # plotAverage(data)
-    plotting2(data)
+    plotAverage(data)
+    # plotting2(data)
 end
