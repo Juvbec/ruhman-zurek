@@ -9,15 +9,15 @@ println("starting ITensors Experiment simulation...")
 
 # declaring variables
 Jxx, Jzz, hx, hz = 0.3, 0.4, 0.2, 0.5
-Nbath = 5
+Nbath = 8
 N = Nbath + 1
 gc = 0.05
 # gbs= 0:0.1:0.5
 # gbs=[0 0.1 0.2 0.3 0.4 0.5 1 2 pi 2*pi]
-gbs = [0 0.1 0.2 0.3 0.4 0.5]
+gbs = [0 ;0.1 ;0.2 ;0.3 ;0.4 ;0.5]
 # gbs = [0.1]
-REP = 50
-RANGE = 50
+REP = 20
+RANGE = 20
 
 # ab=1/2
 
@@ -40,23 +40,25 @@ end
 
 function bathSpinEvolution(s,gb)
     gates = ITensor[]
-    for i in 2:N
-        s1 = s[i]
-        s2 = s[i==N ? 2 : i+1]
+    for j in [1;2]
+        for i in 1+j:2:N
+            s1 = s[i]
+            s2 = s[i==N ? 2 : i+1]
 
-        # XX and ZZ gates
-        hj =  Jzz * op("Z",s1) * op("Z",s2)
-            + Jxx * op("X",s1) * op("X",s2)
-        Gj = exp(-1im * gb * hj)
-        push!(gates, Gj)
+            # XX and ZZ gates
+            hj =  Jzz * op("Z",s1) * op("Z",s2)
+                + Jxx * op("X",s1) * op("X",s2)
+            Gj = exp(-1im * gb * hj)
+            push!(gates, Gj)
 
-        hj = hz * op("Z",s1) + hx * op("X",s1)
-        Gj = exp(-1im * gb * hj)
-        push!(gates, Gj)
+            hj = hz * op("Z",s1) + hx * op("X",s1)
+            Gj = exp(-1im * gb * hj)
+            push!(gates, Gj)
 
-        hj = hz * op("Z",s2) + hx * op("X",s2)
-        Gj = exp(-1im * gb * hj)
-        push!(gates, Gj)
+            hj = hz * op("Z",s2) + hx * op("X",s2)
+            Gj = exp(-1im * gb * hj)
+            push!(gates, Gj)
+        end
     end
     return gates
 end
@@ -94,7 +96,7 @@ function experiment(s,N,gbs,rep)
             psi0= initStates(s,N)
             psi0 = turnUptoLeft(s,N,psi0)
 
-            r,θ =timeDevelopement(s,N,gb,psi0)
+            @time r,θ =timeDevelopement(s,N,gb,psi0)
             push!(data,r)
             push!(data,θ)
 

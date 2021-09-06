@@ -25,3 +25,8 @@ function readData(N)
 
     res
 end
+
+
+# println(pwd())
+# cd(dirname(@__FILE__))
+# println(pwd())

@@ -8,7 +8,7 @@ include("utils.jl")
 # http://docs.juliaplots.org/latest/animations/
 #plotting1 plots the r alone
 #plotting2 plots both r and θ on xy plane of bloch sphere
-N=5
+N=10
 spreadNum = 3
 
 
@@ -24,19 +24,20 @@ spreadNum = 3
 end
 
 function plotAverage(data)
+    gc = data[1,4]
     plt = plot(
-        title=string("Entanglement distillation, N=$N"),
+        title=string("Entanglement distillation ; N=$N ; gc=$gc"),
         xguide="Number of Evolutions",
         yguide="r",
         ylims=(0,1)
     )
     for Ngb in 1:Int(data[1,5])
-        println(data[1,3])
+        # println(data[1,3])
         R=getAverage(data,Ngb)
         display(plot!(
             0:(Int64(data[1,3])-1),
             R,
-            label = string("gb=",0.1*(Ngb-1)),
+            label = string("gb=",round(0.1*(Ngb-1),digits=3)),
         ))
     end
 
@@ -89,6 +90,7 @@ end
 
 
 let
+    gr()
     data = readData(N)
     plotAverage(data)
     # plotting2(data)
