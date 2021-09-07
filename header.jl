@@ -1,5 +1,6 @@
 using ITensors
 using Plots
+include("utils.jl")
 # ITensors.space(::SiteType"S=1/2") = 2
 
 function ITensors.op!(Op::ITensor,
@@ -8,8 +9,6 @@ function ITensors.op!(Op::ITensor,
                         s::Index)
         Op[s'=>1,s=>2] = 1
 end
-
-
 
 
 function initStates(s,N)
@@ -48,54 +47,41 @@ function mSvN(s,psi,b)
   SvN
 end
 
-
 let
-  plotly()
+  # plotly()
   println("starting simulation...")
-  N=10
-  b=5
-  Jxx, Jzz, hx, hz = 0.3, 0.4, 0.2, 0.5
-  g = 0.05
-  range = 1000
+  N=2
+  # b=3
+  range = 1500
   rep = 1
   res = zeros(range)
   s = siteinds("S=1/2", N)
 
+  ψ=initStates(s,N)
+  ψ=turnUptoLeft(s,N,ψ)
+  s1=siteind(ψ,1)
+  s2=siteind(ψ,2)
+  G=itensor(createHRM(4),prime(s2),prime(s1),s2,s1)
+  ψ = apply(G,ψ)
+  @show inner(ψ,ψ)
+  # for jm ∈ 1:rep
+    # gates = ITensor[]
+    #   for j in [1;2]
+    #         for i in j:2:N
+    #             G=ITensor(createHRM(4),prime(s2),prime(s1),s2,s1)
+    #         end
+    #     end #end creating gates
 
-  for j ∈ 1:rep
-    println("$j. starting realization")
-    gates = ITensor[]
-    for i in 1:N
-      # gb=randn()*g
-      gb=g
-      s1 = s[i]
-      s2 = s[i==N ? 2 : i+1]
-
-      # XX and ZZ gates
-      hj =  Jzz * op("Z",s1) * op("Z",s2)
-      + Jxx * op("X",s1) * op("X",s2)
-      Gj = exp(-1im * gb * hj)
-      push!(gates, Gj)
-
-      hj = hz * op("Z",s1) + hx * op("X",s1)
-      Gj = exp(-1im * gb * hj)
-      push!(gates, Gj)
-
-      hj = hz * op("Z",s2) + hx * op("X",s2)
-      Gj = exp(-1im * gb * hj)
-      push!(gates, Gj)
-    end
-    println("$j. finished creating gates. applying gates")
-    ψ=initStates(s,N)
-    ψ=turnUptoLeft(s,N,ψ)
-    svns = []
-
-    for k in 1:range
-      ψ=apply(gates,ψ)
-      push!(svns,mSvN(s,ψ,b))
-    end
-    res += svns
-  end
-  display("text/plain","plotting results")
-  plot(res/(rep*log(2)))
+        # s1 = s[i]
+        # s2 = s[i==N ? 2 : i+1]
+        # svns = []
+    #
+    # for k in 1:range
+    #   ψ=apply(gates,ψ)
+    #   push!(svns,mSvN(s,ψ,b))
+    # end
+    # res += svns
+  # end
+  # display("text/plain","plotting results")
+  # plot(res/(rep*log(2)))
 end
