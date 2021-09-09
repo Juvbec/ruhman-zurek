@@ -48,40 +48,35 @@ function mSvN(s,psi,b)
 end
 
 let
-  # plotly()
-  println("starting simulation...")
-  N=2
-  # b=3
-  range = 1500
-  rep = 1
+  plotly()
+  N=6
+  b=3
+  range = 50
+  rep = 50
   res = zeros(range)
   s = siteinds("S=1/2", N)
 
-  ψ=initStates(s,N)
-  ψ=turnUptoLeft(s,N,ψ)
-  s1=siteind(ψ,1)
-  s2=siteind(ψ,2)
-  G=itensor(createHRM(4),prime(s2),prime(s1),s2,s1)
-  ψ = apply(G,ψ)
-  @show inner(ψ,ψ)
-  # for jm ∈ 1:rep
-    # gates = ITensor[]
-    #   for j in [1;2]
-    #         for i in j:2:N
-    #             G=ITensor(createHRM(4),prime(s2),prime(s1),s2,s1)
-    #         end
-    #     end #end creating gates
+  println("starting simulation...")
 
-        # s1 = s[i]
-        # s2 = s[i==N ? 2 : i+1]
-        # svns = []
-    #
-    # for k in 1:range
-    #   ψ=apply(gates,ψ)
-    #   push!(svns,mSvN(s,ψ,b))
-    # end
-    # res += svns
-  # end
-  # display("text/plain","plotting results")
-  # plot(res/(rep*log(2)))
+  for jm ∈ 1:rep
+    println("realization: $jm")
+    svns = []
+    ψ=initStates(s,N)
+    ψ=turnUptoLeft(s,N,ψ)
+
+    for k in 1:range
+      for j in [1;2]
+        for i in j:2:N
+          s1 = s[i]
+          s2 = s[i==N ? 2 : i+1]
+          G=itensor(createHRM(4),prime(s2),prime(s1),s2,s1)
+          ψ = apply(G,ψ)
+        end
+      end
+      push!(svns,mSvN(s,ψ,b))
+    end
+    res += svns
+  end
+  
+  plot(res/(rep*log(2)))
 end
