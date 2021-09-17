@@ -31,13 +31,18 @@ function plotAverage(data)
         yguide="r",
         ylims=(0,1)
     )
-    for Ngb in 1:Int(data[1,5])
-        # println(data[1,3])
-        R=getAverage(data,Ngb)
+    for M in 1:Int(data[1,5])
+
+        lb = begin
+            if M==1 "0" elseif M==2 "1" else "$(M-2)N" end
+        end
+
+        R=getAverage(data,M)
+
         display(plot!(
             0:(Int64(data[1,3])-1),
             R,
-            label = string("gb=",round(0.1*(Ngb-1),digits=3)),
+            label = lb,
         ))
     end
 
@@ -46,8 +51,8 @@ function plotAverage(data)
 end
 
 
-function getAverage(data,Ngb)
-# first line: [Nbath, Nrealizations, Range, gc, Ngbs]
+function getAverage(data,M)
+# first line: [Nbath, Nrealizations, Range, gc, Ms]
     rep = Int64(data[1,2])
     range = Int64(data[1,3])
 
@@ -55,15 +60,15 @@ function getAverage(data,Ngb)
 
     for i in 1 : rep
 
-        R += getArrayFromData(data,Ngb,i,1,rep)
+        R += getArrayFromData(data,M,i,1,rep)
     end
     R /= rep
 
     R
 end
 
-function getArrayFromData(data,Ngb,Nrealization,type,rep)
-    rowNum = 1 + (Ngb-1)*rep*2 + (Nrealization-1)*2 + type
+function getArrayFromData(data,M,Nrealization,type,rep)
+    rowNum = 1 + (M-1)*rep*2 + (Nrealization-1)*2 + type
     data[rowNum,:]
 end
 

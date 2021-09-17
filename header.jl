@@ -46,37 +46,37 @@ function mSvN(s,psi,b)
   end
   SvN
 end
-
-let
-  plotly()
-  N=6
-  b=3
-  range = 50
-  rep = 50
-  res = zeros(range)
-  s = siteinds("S=1/2", N)
-
-  println("starting simulation...")
-
-  for jm ∈ 1:rep
-    println("realization: $jm")
-    svns = []
-    ψ=initStates(s,N)
-    ψ=turnUptoLeft(s,N,ψ)
-
-    for k in 1:range
-      for j in [1;2]
-        for i in j:2:N
-          s1 = s[i]
-          s2 = s[i==N ? 2 : i+1]
-          G=itensor(createHRM(4),prime(s2),prime(s1),s2,s1)
-          ψ = apply(G,ψ)
-        end
-      end
-      push!(svns,mSvN(s,ψ,b))
-    end
-    res += svns
-  end
-  
-  plot(res/(rep*log(2)))
-end
+# 
+# let
+#   plotly()
+#   N=6
+#   b=3
+#   range = 50
+#   rep = 50
+#   res = zeros(range)
+#   s = siteinds("S=1/2", N)
+#
+#   println("starting simulation...")
+#
+#   for jm ∈ 1:rep
+#     println("realization: $jm")
+#     svns = []
+#     ψ=initStates(s,N)
+#     ψ=turnUptoLeft(s,N,ψ)
+#
+#     for k in 1:range
+#       for j in [1;2]
+#         for i in j:2:N
+#           s1 = s[i]
+#           s2 = s[i==N ? 2 : i+1]
+#           G=itensor(createHRM(4),prime(s2),prime(s1),s2,s1)
+#           ψ = apply(G,ψ)
+#         end
+#       end
+#       push!(svns,mSvN(s,ψ,b))
+#     end
+#     res += svns
+#   end
+#
+#   plot(res/(rep*log(2)))
+# end
