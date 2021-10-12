@@ -7,27 +7,25 @@ include("utils.jl")
 # plotly()
 println("starting ITensors Experiment simulation...")
 
-# declaring variables
-Jxx, Jzz, hx, hz = 0.3, 0.4, 0.2, 0.5
-Nbath = 8
+#~~~~~~~~ declaring variables ~~~~~~~~~~
+# number of particles (bath and general)
+Nbath = 10
 N = Nbath + 1
-M = Nbath * 3
+
+# coupling strength of the gates between the CS and bath
 gc = 0.05
-# gbs= 0:0.1:0.5
-# gbs=[0 0.1 0.2 0.3 0.4 0.5 1 2 pi 2*pi]
-Ms = [0 ;1 ;Nbath ;2*Nbath ;3*Nbath ;4*Nbath]
-# gbs = [0.1]
-REP = 5
+# weaken HRM factor
+gbs = [0.2*i for i in 0:5]
+# number and length of realizations
+REP = 40
 RANGE = 100
 
-# ab=1/2
+
+
 
 #cse and bse evolve the state over one time period
 #cse simulate evlolution of the main qbit in interaction with the bath
-#Σ σᶻ₁σᶻᵢ
-#bse simulate the interactions between the qbits in the bath
-#Σ Jzzσᶻᵢσᶻᵢ₊₁ + Jₓₓσˣᵢσˣᵢ₊₁ + hzσᶻᵢ + hₓσˣᵢ
-#  0.4           0.3           0.5     0.2
+#Σ σᶻ₁σᶻᵢdispate the interactions between the qbits in the bath
 function centralSpinEvolution(s,g)
     gates = ITensor[]
     for i in 2:N
@@ -39,19 +37,21 @@ function centralSpinEvolution(s,g)
     return gates
 end
 
-function bathSpinEvolution(s,ψ)
+function bathSpinEvolution(s,ψ,gb)
     for j in [1;2]
         for i in 1+j:2:N
             s1 = s[i]
             s2 = s[i==N ? 2 : i+1]
-            G=itensor(createHRM(4),prime(s2),prime(s1),s2,s1)
+            G=itensor(getWeakenHaar(gb),prime(s2),prime(s1),s2,s1)
             ψ = apply(G,ψ)
         end
     end
     ψ
 end
 
-function timeDevelopement(s,N,M,ψ)
+
+# applies one realizaion
+function timeDevelopement(s,N,gb,ψ)
     ab = 1/2
     Rs = []
     Θs = []
@@ -60,35 +60,35 @@ function timeDevelopement(s,N,M,ψ)
     centralGates = centralSpinEvolution(s,gcRandArr)
 
     for i in 1:RANGE
+
         r,θ = measureR(s,ψ)
         push!(Rs,real(r/ab))
         push!(Θs,θ)
+
         ψ = apply(centralGates,ψ)
-        for j ∈ 1:M
-            ψ = bathSpinEvolution(s,ψ)
-        end
+        ψ = bathSpinEvolution(s,ψ,gb)
+
     end
-    # display(plot(Rs))
-    # @show gcRandArr
 
     Rs,Θs
 end
+
 # averaging realizations
-function experiment(s,N,Ms,rep)
-# first line: [Nbath, Nrealizations, Range, gc, Ngbs]
+function experiment(s,N,gbs,rep)
+# first line: [Nbath, Nrealizations, Range, gc, gbs]
     data = Any[]
-    push!(data,[N-1 rep RANGE gc size(Ms)[1]])
-    for M ∈ Ms
+    push!(data,[N-1 rep RANGE gc size(gbs)[1]])
+    for gb ∈ gbs
 
         for i ∈ 1:rep
             psi0= initStates(s,N)
             psi0 = turnUptoLeft(s,N,psi0)
 
-            r,θ =timeDevelopement(s,N,M,psi0)
+            r,θ =timeDevelopement(s,N,gb,psi0)
             push!(data,r)
             push!(data,θ)
 
-            println("M=$M realization $i out of $rep")
+            println("gb=$gb realization $i out of $rep")
         end
     end
     data
