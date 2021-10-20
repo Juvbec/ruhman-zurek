@@ -8,7 +8,7 @@ include("utils.jl")
 # http://docs.juliaplots.org/latest/animdistillatioations/
 #plotting1 plots the r alone
 #plotting2 plots both r and θ on xy plane of bloch sphere
-N=8
+N=4
 spreadNum = 3
 
 

@@ -9,11 +9,11 @@ println("starting ITensors Experiment simulation...")
 
 #~~~~~~~~ declaring variables ~~~~~~~~~~
 # number of particles (bath and general)
-Nbath = 10
+Nbath = 4
 N = Nbath + 1
 
 # number of gate layers applied on the bath
-Ms = [0 ;1 ;Nbath ;2*Nbath ;3*Nbath ;4*Nbath]
+Ms = [0 ;1 ;Nbath]
 # coupling strength of the gates between the CS and bath
 gc = 0.05
 
@@ -33,6 +33,7 @@ function centralSpinEvolution(s,g)
 
         hj = op("Z",s[1]) * op("Z",s[i])
         Gj = exp(-1im * g[i-1] * hj)
+        # Gj = exp(-1im * gc*randn() * hj)
         push!(gates, Gj)
     end
     return gates
@@ -98,6 +99,7 @@ function experiment(s,N,Ms,rep)
 end
 
 let
+    cd("D:\\Programming\\research\\zurek\\2. haar M")
     s = siteinds("S=1/2",N)
     saveData(experiment(s,N,Ms,REP),"w",Nbath)
 end
