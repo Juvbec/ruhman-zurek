@@ -22,21 +22,20 @@ REP = 40
 RANGE = 100
 
 
-
+#111111111111111111111111111111111111111111111111111111111
 
 #cse and bse evolve the state over one time period
 #cse simulate evlolution of the main qbit in interaction with the bath
 #Σ σᶻ₁σᶻᵢdispate the interactions between the qbits in the bath
-function centralSpinEvolution(s,g)
+
+function centralSpinEvolution(s,ψ)
     gates = ITensor[]
     for i in 2:N
-
         hj = op("Z",s[1]) * op("Z",s[i])
-        Gj = exp(-1im * g[i-1] * hj)
-        # Gj = exp(-1im * gc*randn() * hj)
+        Gj = exp(-1im * gc*randn() * hj)
         push!(gates, Gj)
     end
-    return gates
+    return apply(gates,ψ)
 end
 
 function bathSpinEvolution(s,ψ)
@@ -58,8 +57,8 @@ function timeDevelopement(s,N,M,ψ)
     Rs = []
     Θs = []
 
-    gcRandArr = [gc*randn() for n in 1:Nbath]
-    centralGates = centralSpinEvolution(s,gcRandArr)
+    # gcRandArr = [gc*randn() for n in 1:Nbath]
+    # centralGates = centralSpinEvolution(s,gcRandArr)
 
     for i in 1:RANGE
 
@@ -67,7 +66,8 @@ function timeDevelopement(s,N,M,ψ)
         push!(Rs,real(r/ab))
         push!(Θs,θ)
 
-        ψ = apply(centralGates,ψ)
+        # ψ = apply(centralGates,ψ)
+        ψ = centralSpinEvolution(s,ψ)
         for j ∈ 1:M
             ψ = bathSpinEvolution(s,ψ)
         end
